@@ -1,0 +1,38 @@
+org: rodrigocardoso
+app: serverless-test
+
+
+service: serverless-test
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  vpc:
+    securityGroupIds:
+      - sg-01b9c1c757d9c8baa
+    subnetIds:
+      - subnet-00eb5d868d1ed67ff
+      - subnet-0886f6fd84b8c5f34
+      - subnet-02d8bd2d71310faba
+  enviroment:
+    
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    dockerFile: ./Dockerfile
+
+functions:
+  hello:
+    handler: handler.hello
+    layers:
+      - arn:aws:lambda:us-east-1:880132858752:layer:psycopg2:1
+    # Appending AWS API Gateway
+    events:
+      - http:
+          path: hello
+          method: get
